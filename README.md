@@ -1,5 +1,6 @@
 # pr0gramm-apiCall
 PHP Funktion um die API von pr0gramm.com zu benutzen.
+Es handelt sich hierbei nicht um eine lib, sondern um eine Standalone-Funktion um die API von [pr0gramm.com](https://pr0gramm.com) mit einem Sessioncookie zu verwenden.
 
 ## Grundlegendes
 Die Funktionsdatei muss per `require_once("/pfad/zur/apiCall.php");` in das PHP Script eingebunden werden.
