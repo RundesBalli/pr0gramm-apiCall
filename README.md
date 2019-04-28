@@ -17,4 +17,4 @@ Für manche Funktionen von [pr0gramm.com](https://pr0gramm.com) (zum Beispiel da
 Die `config.template.php` muss in `config.php` umbenannt oder kopiert werden. Die darinliegenden Variablen müssen angepasst werden und sind entsprechend kommentiert.
 
 ## Nutzung
-Die Parameter der Funktion sind in der `apiCall.php` ausführlich beschrieben.
+Die Parameter der Funktion sind in der `apiCall.php` ausführlich beschrieben. https://github.com/RundesBalli/pr0gramm-apiCall/blob/master/apiCall.php#L20
