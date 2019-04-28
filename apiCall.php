@@ -5,8 +5,10 @@
  * Eine Funktion, die sich automatisch auf pr0gramm.com einloggt
  * um mit den generierten Sessioncookies API Anfragen durchzuführen.
  * 
- * @author RundesBalli
- * @version 2.0
+ * @author    RundesBalli <webspam@rundesballi.com>
+ * @copyright 2019 RundesBalli
+ * @version   2.0
+ * @license   MIT-License
 */
 
 /**
