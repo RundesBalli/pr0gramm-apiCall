@@ -87,7 +87,7 @@ function apiCall($url, $postData = NULL) {
     $try++;
     if($try > 10) {
       if($showErrors === TRUE) {
-        die("cURL - too many trys - url: $url");
+        die("cURL - Zu viele Versuche - url: $url");
       } else {
         die();
       }
