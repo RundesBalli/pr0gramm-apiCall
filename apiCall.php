@@ -9,6 +9,7 @@
  * @copyright 2019 RundesBalli
  * @version   2.0
  * @license   MIT-License
+ * @see       https://github.com/RundesBalli/pr0gramm-apiCall
 */
 
 /**
