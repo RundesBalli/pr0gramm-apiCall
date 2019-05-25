@@ -111,16 +111,20 @@ function apiCall($url, $postData = NULL) {
      * Auswerten des HTTP Codes.
      * Bei HTTP503 hat man zu viele Anfragen in zu kurzer Zeit gestellt. Das
      * Script wartet dann für eine halbe Sekunde und läuft erneut durch.
-     * Alles was nicht HTTP200 oder HTTP503 ist wird mit einer Fehlermeldung
-     * beendet.
+     * Alles was nicht HTTP200, HTTP404 oder HTTP503 ist wird mit einer
+     * Fehlermeldung beendet.
      * Wenn die Anfrage erfolgreich war und mit HTTP200 quittiert wird, dann
      * wird die Antwort als assoziatives Array zurückgegeben.
+     * Wenn man z.B. einen nicht mehr existenten User abfragt, dann bekommt
+     * man einen 404, und eine Fehlermeldung in JSON, die man dann im
+     * aufrufenden Script verarbeiten kann. Deshalb ist die Abfrage auch bei
+     * einem 404 "erfolgreich".
      */
     $http_code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
     if($http_code == 503) {
       usleep(500000);
       continue;
-    } elseif($http_code == 200) {
+    } elseif($http_code == 200 OR $http_code == 404) {
       $success = TRUE;
     } else {
       if($showErrors === TRUE) {
