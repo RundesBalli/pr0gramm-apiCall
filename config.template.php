@@ -13,13 +13,6 @@
 $cookiefile = __DIR__.DIRECTORY_SEPARATOR."cookies.txt";
 
 /**
- * Fehleranzeige ein- oder ausschalten
- * 
- * @var boolean
- */
-$showErrors = TRUE;
-
-/**
  * Die IP-Adresse die für die ausgehende Verbindung genutzt werden soll.
  * 
  * Beispielwert: 1.2.3.4
