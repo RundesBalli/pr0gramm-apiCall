@@ -3,18 +3,9 @@
  * captchaLogin.php
  * 
  * Datei zum händischen Einloggen eines Nicht-Bot-Accounts.
- * 
- * Ausführung über die CLI!
  */
 $captchalogin = 1;
 require_once(__DIR__.DIRECTORY_SEPARATOR."apiCall.php");
-
-/**
- * Prüfen ob das Script in der CLI läuft.
- */
-if(php_sapi_name() != 'cli') {
-  die("Das Script kann nur per Terminal ausgeführt werden.\n");
-}
 
 /**
  * Dateien-Löschfunktion

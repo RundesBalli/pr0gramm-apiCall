@@ -175,7 +175,7 @@ if($loggedIn['loggedIn'] !== TRUE) {
          * darf es nicht beendet werden.
          */
         if(!isset($captchalogin)) {
-          die("Login - Captcha Login erforderlich. Bitte captchaLogin.php im Terminal ausführen.\n");
+          die("Login - Captcha Login erforderlich. Bitte captchaLogin.php ausführen.\n");
         }
       } else {
         /**
