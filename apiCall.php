@@ -88,11 +88,7 @@ function apiCall($url, $postData = NULL) {
   do {
     $try++;
     if($try > 10) {
-      if($showErrors === TRUE) {
-        die("cURL - Zu viele Versuche - url: $url");
-      } else {
-        die();
-      }
+      die("cURL - Zu viele Versuche - url: ".$url."\n");
     }
 
     /**
@@ -103,11 +99,7 @@ function apiCall($url, $postData = NULL) {
     $errno = curl_errno($ch);
     $errstr = curl_error($ch);
     if($errno != 0) {
-      if($showErrors === TRUE) {
-        die("cURL - errno: $errno - errstr: $errstr - url: $url");
-      } else {
-        die();
-      }
+      die("cURL - errno: ".$errno." - errstr: ".$errstr." - url: ".$url."\n");
     }
 
     /**
@@ -130,11 +122,7 @@ function apiCall($url, $postData = NULL) {
     } elseif($http_code == 200 OR $http_code == 404) {
       $success = TRUE;
     } else {
-      if($showErrors === TRUE) {
-        die("cURL - httpcode: $http_code - url: $url");
-      } else {
-        die();
-      }
+      die("cURL - httpcode: ".$http_code." - url: ".$url."\n");
     }
   } while($success == FALSE);
   
@@ -147,7 +135,7 @@ function apiCall($url, $postData = NULL) {
   /**
    * Umwandeln des JSON-Strings aus der Antwort in ein assoziatives Array.
    */
-  
+
   $response = json_decode($response, TRUE);
   /**
    * Rückgabe des zuvor erzeugten assoziativen Arrays.
