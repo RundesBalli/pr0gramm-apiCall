@@ -158,30 +158,54 @@ if($loggedIn['loggedIn'] !== TRUE) {
    * ist. In jedem Fall wird die Ausführung unterbrochen.
    */
   if($login['success'] !== TRUE) {
-    if($showErrors === FALSE) {
-      die();
-    } else {
-      if($login['ban'] === NULL) {
-        die("Login - falsches Passwort");
+    /**
+     * Wenn kein Ban vorliegt, dann kann es einerseits an einem falschen
+     * Passwort, oder daran liegen, dass es sich nicht um einen Bot-Account
+     * handelt.
+     */
+    if($login['ban'] === NULL) {
+      if($login['error'] == 'invalidLogin') {
+        /**
+         * Falsches Passwort
+         */
+        die("Login - falsches Passwort\n");
+      } elseif($login['error'] == 'invalidCaptcha') {
+        /**
+         * Captcha erforderlich oder ungültig. Wenn das Script vom captchaLogin.php aufgerufen wird
+         * darf es nicht beendet werden.
+         */
+        if(!isset($captchalogin)) {
+          die("Login - Captcha Login erforderlich. Bitte captchaLogin.php im Terminal ausführen.\n");
+        }
       } else {
-        die("Login - der Account ist gesperrt");
+        /**
+         * Unbekannter Fehler mit Ausgabe der Response
+         */
+        die("Login - unbekannter Fehler\n".json_encode($login)."\n");
       }
+    } else {
+      /**
+       * Account gesperrt
+       */
+      die("Login - der Account ist gesperrt\n");
     }
   }
 }
 
-/**
- * Speicherung der nonce in eine Variable zur weiteren Benutzung.
- */
-$fp = fopen($cookiefile, "r");
-$read = fread($fp, filesize($cookiefile));
-$regex = '/^(?!#)pr0gramm\.com\t.*\tme\t(.*)/m';
-preg_match_all($regex, $read, $matches);
-$nonce = substr(json_decode(urldecode($matches[1][0]), TRUE)['id'], 0, 16);
+if(!isset($captchalogin)) {
+  /**
+   * Speicherung der nonce in eine Variable zur weiteren Benutzung.
+   */
+  $fp = fopen($cookiefile, "r");
+  $read = fread($fp, filesize($cookiefile));
+  $regex = '/^(?!#)pr0gramm\.com\t.*\tme\t(.*)/m';
+  preg_match_all($regex, $read, $matches);
+  $nonce = substr(json_decode(urldecode($matches[1][0]), TRUE)['id'], 0, 16);
 
-/**
- * Wenn das Script hier angekommen ist, ist alles in Ordnung. Der Account ist
- * mit einer gültigen Sitzung eingeloggt, die nonce steht zur Verfügung und es
- * kann losgehen.
- */
+  /**
+   * Wenn das Script hier angekommen ist, ist alles in Ordnung. Der Account ist
+   * mit einer gültigen Sitzung eingeloggt, die nonce steht zur Verfügung und es
+   * kann losgehen.
+   */
+}
 ?>
