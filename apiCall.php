@@ -80,6 +80,7 @@ function apiCall($url, $postData = NULL) {
    */
   $try = 0;
   $success = FALSE;
+
   /**
    * Versuch die API zu erreichen. Falls zu viele Abfragen erfolgt sind wird
    * die Abfrage bis zu 10x wiederholt und dann abgebrochen.
@@ -93,6 +94,7 @@ function apiCall($url, $postData = NULL) {
         die();
       }
     }
+
     /**
      * Ausführen des cURLs und speichern der Antwort, sowie eventuell
      * anfallender Fehler.
@@ -107,6 +109,7 @@ function apiCall($url, $postData = NULL) {
         die();
       }
     }
+
     /**
      * Auswerten des HTTP Codes.
      * Bei HTTP503 hat man zu viele Anfragen in zu kurzer Zeit gestellt. Das
@@ -144,6 +147,7 @@ function apiCall($url, $postData = NULL) {
   /**
    * Umwandeln des JSON-Strings aus der Antwort in ein assoziatives Array.
    */
+  
   $response = json_decode($response, TRUE);
   /**
    * Rückgabe des zuvor erzeugten assoziativen Arrays.
