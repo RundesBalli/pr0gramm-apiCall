@@ -25,3 +25,7 @@ Die `config.template.php` muss in `config.php` umbenannt oder kopiert werden. Di
 
 ## Nutzung
 Die Parameter der Funktion sind in der `apiCall.php` ausführlich beschrieben. https://github.com/RundesBalli/pr0gramm-apiCall/blob/master/apiCall.php#L20
+
+## Mögliche Probleme
+Auf verschiedenen System ist es möglich dass die Ausführung von `php captchaLogin.php` mit dem Fehler `cURL - errno: 45 - errstr: bind failed with errno 97: Address family not supported by protocol - url: https://pr0gramm.com/api/user/loggedin` abgebrochen wird.
+Ein einfacher Workaround ist es in der `apiCall.php` Datei die Zeile `CURLOPT_INTERFACE => $bindTo,` auszukommentieren bzw. zu entfernen.
