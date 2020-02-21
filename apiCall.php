@@ -71,7 +71,7 @@ function apiCall($url, $postData = NULL, $authToken = NULL) {
    * 
    * Wenn kein authToken übergeben wurde, dann wird der Cookie eingebunden
    */
-  if($authToken !== NULL AND !empty($authToken)) {
+  if($authToken !== NULL) {
     $options[CURLOPT_HTTPHEADER] = array("pr0-api-key: ".$authToken);
   } else {
     curl_setopt($ch, CURLOPT_COOKIEJAR, $cookiefile);
