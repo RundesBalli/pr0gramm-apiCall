@@ -33,7 +33,6 @@ function apiCall($url, $postData = NULL) {
    */
   global $bindTo;
   global $useragent;
-  global $showErrors;
   global $cookiefile;
   
   /**
