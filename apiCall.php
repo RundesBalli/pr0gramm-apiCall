@@ -24,10 +24,12 @@ require_once(__DIR__.DIRECTORY_SEPARATOR."config.php");
  * @param array   $postData   Wenn Daten per POST übergeben werden sollen, dann
  *                            müssen sie als Array übergeben werden:
  *                            POSTFIELD=>POSTVALUE
+ * @param string  $authToken  Das AuthToken für oAuth, welches als Header
+ *                            gesendet wird.
  * 
  * @return array  Die API-Response als assoziatives Array.
  */
-function apiCall($url, $postData = NULL) {
+function apiCall($url, $postData = NULL, $authToken = NULL) {
   /**
    * Globale Variablen aus der Konfigurationsdatei in die Funktion einbinden.
    */
@@ -53,13 +55,7 @@ function apiCall($url, $postData = NULL) {
     CURLOPT_TIMEOUT => 10
   );
   
-  /**
-   * Einbinden der Sitzungscookies.
-   */
-  curl_setopt($ch, CURLOPT_COOKIEJAR, $cookiefile);
-  curl_setopt($ch, CURLOPT_COOKIEFILE, $cookiefile);
-  
-  /**
+    /**
    * Postdaten vorbereiten und mit in die Optionen einbinden, sofern durch den
    * Funktionsaufruf übergeben und gewünscht.
    */
@@ -67,6 +63,19 @@ function apiCall($url, $postData = NULL) {
     $data = http_build_query($postData, '', '&', PHP_QUERY_RFC1738);
     $options[CURLOPT_POST] = TRUE;
     $options[CURLOPT_POSTFIELDS] = $data;
+  }
+
+  /**
+   * pr0Auth Anfrage an die API mit Token
+   * (nur für oAuth)
+   * 
+   * Wenn kein authToken übergeben wurde, dann wird der Cookie eingebunden
+   */
+  if($authToken !== NULL AND !empty($authToken)) {
+    $options[CURLOPT_HTTPHEADER] = array("pr0-api-key: ".$authToken);
+  } else {
+    curl_setopt($ch, CURLOPT_COOKIEJAR, $cookiefile);
+    curl_setopt($ch, CURLOPT_COOKIEFILE, $cookiefile);
   }
   
   /**
@@ -134,8 +143,8 @@ function apiCall($url, $postData = NULL) {
   /**
    * Umwandeln des JSON-Strings aus der Antwort in ein assoziatives Array.
    */
-
   $response = json_decode($response, TRUE);
+
   /**
    * Rückgabe des zuvor erzeugten assoziativen Arrays.
    */
@@ -144,7 +153,9 @@ function apiCall($url, $postData = NULL) {
 
 /**
  * Einmalige Prüfung beim Einbinden der Funktion, ob man eingeloggt ist oder
- * nicht. Falls nicht wird versucht sich einzuloggen.
+ * nicht. Falls nicht wird versucht sich automatisch einzuloggen. (Nur mit
+ * Bot-Account möglich! Nicht-Bot-Accounts müssen über captchaLogin.php ein-
+ * geloggt werden.)
  */
 $loggedIn = apiCall("https://pr0gramm.com/api/user/loggedin", NULL);
 if($loggedIn['loggedIn'] !== TRUE) {
