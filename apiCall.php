@@ -73,9 +73,11 @@ function apiCall($url, $postData = NULL, $authToken = NULL) {
    */
   if($authToken !== NULL) {
     $options[CURLOPT_HTTPHEADER] = array("pr0-api-key: ".$authToken);
+    $accept403 = TRUE;
   } else {
     curl_setopt($ch, CURLOPT_COOKIEJAR, $cookiefile);
     curl_setopt($ch, CURLOPT_COOKIEFILE, $cookiefile);
+    $accept403 = FALSE;
   }
   
   /**
@@ -130,7 +132,17 @@ function apiCall($url, $postData = NULL, $authToken = NULL) {
     } elseif($http_code == 200 OR $http_code == 404) {
       $success = TRUE;
     } else {
-      die("cURL - httpcode: ".$http_code." - url: ".$url."\n");
+      if($http_code == 403 AND $accept403 == TRUE) {
+        /**
+         * Die einzige Situation wo ein HTTP403 zulässig wäre, ist bei der
+         * Abfrage mit authToken. Wenn mit einem ungültigen authToken angefragt
+         * wird, dann wirft die API einen 403 zurück, der dann im jeweiligen
+         * Script abgefangen werden muss.
+         */
+        return NULL;
+      } else {
+        die("cURL - httpcode: ".$http_code." - url: ".$url."\n");
+      }
     }
   } while($success == FALSE);
   
