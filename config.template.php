@@ -10,7 +10,7 @@
  * 
  * @var string
  */
-$cookiefile = __DIR__.DIRECTORY_SEPARATOR."cookies.txt";
+$cookieFile = __DIR__.DIRECTORY_SEPARATOR."cookies.txt";
 
 /**
  * Die IPv4-Adresse oder das Interface das für die ausgehende Verbindung genutzt werden soll.
@@ -35,7 +35,7 @@ $bindTo = "";
  * 
  * @var string
  */
-$useragent = "";
+$userAgent = "";
 
 /**
  * Pr0gramm Zugangsdaten

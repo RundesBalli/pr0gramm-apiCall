@@ -4,38 +4,38 @@
  * 
  * Datei zum händischen Einloggen eines Nicht-Bot-Accounts.
  */
-$captchalogin = 1;
+$captchaLogin = 1;
 require_once(__DIR__.DIRECTORY_SEPARATOR."apiCall.php");
 
 /**
  * Dateien-Löschfunktion
  */
 function delFiles() {
-  global $captchafile;
-  global $tokenfile;
-  global $solvedcaptcha;
-  if(file_exists($solvedcaptcha)) {
-    unlink($solvedcaptcha);
+  global $captchaFile;
+  global $tokenFile;
+  global $solvedCaptcha;
+  if(file_exists($solvedCaptcha)) {
+    unlink($solvedCaptcha);
   }
-  if(file_exists($tokenfile)) {
-    unlink($tokenfile);
+  if(file_exists($tokenFile)) {
+    unlink($tokenFile);
   }
-  if(file_exists($captchafile)) {
-    unlink($captchafile);
+  if(file_exists($captchaFile)) {
+    unlink($captchaFile);
   }
 }
 
 /**
  * Definierung der Captcha-Dateien
  */
-$captchafile = __DIR__.DIRECTORY_SEPARATOR."__captcha.png";
-$tokenfile = __DIR__.DIRECTORY_SEPARATOR."__token.txt";
-$solvedcaptcha = __DIR__.DIRECTORY_SEPARATOR."__captcha.txt";
+$captchaFile = __DIR__.DIRECTORY_SEPARATOR."__captcha.png";
+$tokenFile = __DIR__.DIRECTORY_SEPARATOR."__token.txt";
+$solvedCaptcha = __DIR__.DIRECTORY_SEPARATOR."__captcha.txt";
 
 /**
  * Prüfung ob diese Dateien bereits existieren, falls nicht wird ein neues Captcha angefragt.
  */
-if((!file_exists($tokenfile) OR !file_exists($solvedcaptcha)) OR !file_exists($captchafile)) {
+if((!file_exists($tokenFile) OR !file_exists($solvedCaptcha)) OR !file_exists($captchaFile)) {
   /**
    * Prüfen, ob vielleicht eine einzelne der Dateien existiert, falls ja: löschen.
    */
@@ -53,34 +53,34 @@ if((!file_exists($tokenfile) OR !file_exists($solvedcaptcha)) OR !file_exists($c
    * Wichtig ist, dass der "data:image/png;base64,"-Teil vor dem
    * eigentlichen Base64 String entfernt wird.
    */
-  $fp = fopen($captchafile, "w+");
+  $fp = fopen($captchaFile, "w+");
   fwrite($fp, base64_decode(explode(",", $captcha['captcha'])[1]));
   fclose($fp);
 
   /**
    * Das Token muss auch gespeichert werden.
    */
-  $fp = fopen($tokenfile, "w+");
+  $fp = fopen($tokenFile, "w+");
   fwrite($fp, $captcha['token']);
   fclose($fp);
 
   /**
    * Eine leere Datei wird angelegt, in die das Captcha-Ergebnis geschrieben werden muss.
    */
-  $fp = fopen($solvedcaptcha, "w+");
+  $fp = fopen($solvedCaptcha, "w+");
   fwrite($fp, "");
   fclose($fp);
 
   /**
    * Beenden mit der Fehlermeldung, dass ein Captcha erforderlich ist.
    */
-  die("Captcha wurde abgerufen.\n\nVorgehensweise:\n".$captchafile."\nbetrachten und in\n".$solvedcaptcha."\ndie Lösung schreiben, dann erneut aufrufen.\n");
+  die("Captcha wurde abgerufen.\n\nVorgehensweise:\n".$captchaFile."\nbetrachten und in\n".$solvedCaptcha."\ndie Lösung schreiben, dann erneut aufrufen.\n");
 } else {
   /**
    * Tokendatei und Datei mit Lösung des Captchas liegen vor.
    * Prüfung, ob die Tokendatei und die Lösung korrekt sind.
    */
-  if(preg_match("/[0-9a-fA-F]{32}/", file_get_contents($tokenfile), $token) AND preg_match("/[0-9a-zA-Z]{5}/", file_get_contents($solvedcaptcha), $captcha)) {
+  if(preg_match("/[0-9a-fA-F]{32}/", file_get_contents($tokenFile), $token) AND preg_match("/[0-9a-zA-Z]{5}/", file_get_contents($solvedCaptcha), $captcha)) {
     $login = apiCall("https://pr0gramm.com/api/user/login", array("name" => $pr0Username, "password" => $pr0Password, "captcha" => $captcha[0], "token" => $token[0]));
     /**
      * Wenn der Login nicht erfolgreich war, dann wird noch geprüft wieso dies so

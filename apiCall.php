@@ -34,8 +34,8 @@ function apiCall($url, $postData = NULL, $authToken = NULL) {
    * Globale Variablen aus der Konfigurationsdatei in die Funktion einbinden.
    */
   global $bindTo;
-  global $useragent;
-  global $cookiefile;
+  global $userAgent;
+  global $cookieFile;
   
   /**
    * cURL initialisieren
@@ -49,7 +49,7 @@ function apiCall($url, $postData = NULL, $authToken = NULL) {
   $options = array(
     CURLOPT_RETURNTRANSFER => TRUE,
     CURLOPT_URL => $url,
-    CURLOPT_USERAGENT => $useragent,
+    CURLOPT_USERAGENT => $userAgent,
     CURLOPT_INTERFACE => $bindTo,
     CURLOPT_CONNECTTIMEOUT => 5,
     CURLOPT_TIMEOUT => 10
@@ -75,8 +75,8 @@ function apiCall($url, $postData = NULL, $authToken = NULL) {
     $options[CURLOPT_HTTPHEADER] = array("pr0-api-key: ".$authToken);
     $accept403 = TRUE;
   } else {
-    curl_setopt($ch, CURLOPT_COOKIEJAR, $cookiefile);
-    curl_setopt($ch, CURLOPT_COOKIEFILE, $cookiefile);
+    curl_setopt($ch, CURLOPT_COOKIEJAR, $cookieFile);
+    curl_setopt($ch, CURLOPT_COOKIEFILE, $cookieFile);
     $accept403 = FALSE;
   }
   
@@ -106,10 +106,10 @@ function apiCall($url, $postData = NULL, $authToken = NULL) {
      * anfallender Fehler.
      */
     $response = curl_exec($ch);
-    $errno = curl_errno($ch);
-    $errstr = curl_error($ch);
-    if($errno != 0) {
-      die("cURL - errno: ".$errno." - errstr: ".$errstr." - url: ".$url."\n");
+    $errNo = curl_errno($ch);
+    $errStr = curl_error($ch);
+    if($errNo != 0) {
+      die("cURL - errno: ".$errNo." - errstr: ".$errStr." - url: ".$url."\n");
     }
 
     /**
@@ -125,14 +125,14 @@ function apiCall($url, $postData = NULL, $authToken = NULL) {
      * aufrufenden Script verarbeiten kann. Deshalb ist die Abfrage auch bei
      * einem 404 "erfolgreich".
      */
-    $http_code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
-    if($http_code == 503) {
+    $httpCode = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    if($httpCode == 503) {
       usleep(500000);
       continue;
-    } elseif($http_code == 200 OR $http_code == 404) {
+    } elseif($httpCode == 200 OR $httpCode == 404) {
       $success = TRUE;
     } else {
-      if($http_code == 403 AND $accept403 == TRUE) {
+      if($httpCode == 403 AND $accept403 == TRUE) {
         /**
          * Die einzige Situation wo ein HTTP403 zulässig wäre, ist bei der
          * Abfrage mit authToken. Wenn mit einem ungültigen authToken angefragt
@@ -141,7 +141,7 @@ function apiCall($url, $postData = NULL, $authToken = NULL) {
          */
         return NULL;
       } else {
-        die("cURL - httpcode: ".$http_code." - url: ".$url."\n");
+        die("cURL - httpcode: ".$httpCode." - url: ".$url."\n");
       }
     }
   } while($success == FALSE);
@@ -196,7 +196,7 @@ if($loggedIn['loggedIn'] !== TRUE) {
          * Captcha erforderlich oder ungültig. Wenn das Script vom captchaLogin.php aufgerufen wird
          * darf es nicht beendet werden.
          */
-        if(!isset($captchalogin)) {
+        if(!isset($captchaLogin)) {
           die("Login - Captcha Login erforderlich. Bitte captchaLogin.php ausführen.\n");
         }
       } else {
@@ -214,12 +214,12 @@ if($loggedIn['loggedIn'] !== TRUE) {
   }
 }
 
-if(!isset($captchalogin)) {
+if(!isset($captchaLogin)) {
   /**
    * Speicherung der nonce in eine Variable zur weiteren Benutzung.
    */
-  $fp = fopen($cookiefile, "r");
-  $read = fread($fp, filesize($cookiefile));
+  $fp = fopen($cookieFile, "r");
+  $read = fread($fp, filesize($cookieFile));
   $regex = '/^(?!#)pr0gramm\.com\t.*\tme\t(.*)/m';
   preg_match_all($regex, $read, $matches);
   $nonce = substr(json_decode(urldecode($matches[1][0]), TRUE)['id'], 0, 16);
