@@ -6,8 +6,8 @@
  * um mit den generierten Sessioncookies API Anfragen durchzuführen.
  * 
  * @author    RundesBalli <webspam@rundesballi.com>
- * @copyright 2019 RundesBalli
- * @version   2.0
+ * @copyright 2022 RundesBalli
+ * @version   3.0
  * @license   MIT-License
  * @see       https://github.com/RundesBalli/pr0gramm-apiCall
 */
@@ -130,6 +130,13 @@ function apiCall($url, $postData = NULL, $authToken = NULL) {
        * Daher ist auch ein 404 eine "erfolgreiche" Anfrage.
        */
       $success = TRUE;
+    } elseif($httpCode == 400) {
+      /**
+       * Wenn man keinen Bot-Account hat und versucht sich einzuloggen, wirft die API ohne
+       * übergebene Captcha Daten einen 400 Bad Request. Hier wird drauf hingewiesen, dass
+       * die Login Credentials nicht ohne Captcha übergeben werden können.
+       */
+      die("Login - Captcha Login erforderlich. Bitte captchaLogin.php ausführen.\n");
     } else {
       if($httpCode == 403 AND $accept403 == TRUE) {
         /**
@@ -167,57 +174,53 @@ function apiCall($url, $postData = NULL, $authToken = NULL) {
 }
 
 /**
- * Einmalige Prüfung beim Einbinden der Funktion, ob man eingeloggt ist oder
- * nicht. Falls nicht wird versucht sich automatisch einzuloggen. (Nur mit
- * Bot-Account möglich! Nicht-Bot-Accounts müssen über captchaLogin.php ein-
- * geloggt werden.)
+ * Wenn das Script per captchaLogin.php aufgerufen wird, ist die Prüfung ob ein
+ * Login vorliegt irrelevant.
  */
-$loggedIn = apiCall("https://pr0gramm.com/api/user/loggedin", NULL);
-if($loggedIn['loggedIn'] !== TRUE) {
+if(!isset($captchaLogin)) {
   /**
-   * Der Login wird durchgeführt
+   * Einmalige Prüfung beim Einbinden der Funktion, ob man eingeloggt ist oder
+   * nicht. Falls nicht wird versucht sich automatisch einzuloggen. (Nur mit
+   * Bot-Account möglich! Nicht-Bot-Accounts müssen über captchaLogin.php ein-
+   * geloggt werden.)
    */
-  $login = apiCall("https://pr0gramm.com/api/user/login", array("name" => $pr0Username, "password" => $pr0Password));
-  /**
-   * Wenn der Login nicht erfolgreich war, dann wird noch geprüft wieso dies so
-   * ist. In jedem Fall wird die Ausführung unterbrochen.
-   */
-  if($login['success'] !== TRUE) {
+  $loggedIn = apiCall("https://pr0gramm.com/api/user/loggedin", NULL);
+  if($loggedIn['loggedIn'] !== TRUE) {
     /**
-     * Wenn kein Ban vorliegt, dann kann es einerseits an einem falschen
-     * Passwort, oder daran liegen, dass es sich nicht um einen Bot-Account
-     * handelt.
+     * Der Login wird durchgeführt
      */
-    if($login['ban'] === NULL) {
-      if($login['error'] == 'invalidLogin') {
-        /**
-         * Falsches Passwort
-         */
-        die("Login - falsches Passwort\n");
-      } elseif($login['error'] == 'invalidCaptcha') {
-        /**
-         * Captcha erforderlich oder ungültig. Wenn das Script vom captchaLogin.php aufgerufen wird
-         * darf es nicht beendet werden.
-         */
-        if(!isset($captchaLogin)) {
-          die("Login - Captcha Login erforderlich. Bitte captchaLogin.php ausführen.\n");
+    $login = apiCall("https://pr0gramm.com/api/user/login", array("name" => $pr0Username, "password" => $pr0Password));
+    /**
+     * Wenn der Login nicht erfolgreich war, dann wird noch geprüft wieso dies so
+     * ist. In jedem Fall wird die Ausführung unterbrochen.
+     */
+    if($login['success'] !== TRUE) {
+      /**
+       * Wenn kein Ban vorliegt, dann kann es einerseits an einem falschen
+       * Passwort, oder daran liegen, dass es sich nicht um einen Bot-Account
+       * handelt.
+       */
+      if($login['ban'] === NULL) {
+        if($login['error'] == 'invalidLogin') {
+          /**
+           * Falsches Passwort
+           */
+          die("Login - falsches Passwort\n");
+        } else {
+          /**
+           * Unbekannter Fehler mit Ausgabe der Response
+           */
+          die("Login - unbekannter Fehler\n".json_encode($login)."\n");
         }
       } else {
         /**
-         * Unbekannter Fehler mit Ausgabe der Response
+         * Account gesperrt
          */
-        die("Login - unbekannter Fehler\n".json_encode($login)."\n");
+        die("Login - der Account ist gesperrt\n");
       }
-    } else {
-      /**
-       * Account gesperrt
-       */
-      die("Login - der Account ist gesperrt\n");
     }
   }
-}
 
-if(!isset($captchaLogin)) {
   /**
    * Speicherung der nonce in eine Variable zur weiteren Benutzung.
    */
