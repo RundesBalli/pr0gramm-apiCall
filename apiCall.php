@@ -184,8 +184,8 @@ if(!isset($captchaLogin)) {
    * Bot-Account möglich! Nicht-Bot-Accounts müssen über captchaLogin.php ein-
    * geloggt werden.)
    */
-  $loggedIn = apiCall("https://pr0gramm.com/api/user/loggedin", NULL);
-  if($loggedIn['loggedIn'] !== TRUE) {
+  $loggedIn = apiCall("https://pr0gramm.com/api/user/me", NULL);
+  if(!empty($loggedIn['error'])) {
     /**
      * Der Login wird durchgeführt
      */
