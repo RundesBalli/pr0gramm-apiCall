@@ -42,7 +42,9 @@ $userAgent = "";
  * 
  * @var string
  * @var string
+ * @var bool
  */
 $pr0Username = "";
 $pr0Password = "";
+$isBot = FALSE;
 ?>

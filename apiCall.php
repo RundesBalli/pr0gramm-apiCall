@@ -36,6 +36,7 @@ function apiCall($url, $postData = NULL, $authToken = NULL) {
   global $bindTo;
   global $userAgent;
   global $cookieFile;
+  global $isBot;
   
   /**
    * cURL initialisieren
@@ -78,6 +79,13 @@ function apiCall($url, $postData = NULL, $authToken = NULL) {
     curl_setopt($ch, CURLOPT_COOKIEJAR, $cookieFile);
     curl_setopt($ch, CURLOPT_COOKIEFILE, $cookieFile);
     $accept403 = FALSE;
+  }
+
+  /**
+   * Bot Login
+   */
+  if($url == 'https://pr0gramm.com/api/user/me' AND $isBot) {
+    $accept403 = TRUE;
   }
   
   /**
@@ -185,7 +193,7 @@ if(!isset($captchaLogin)) {
    * geloggt werden.)
    */
   $loggedIn = apiCall("https://pr0gramm.com/api/user/me", NULL);
-  if(!empty($loggedIn['error'])) {
+  if($loggedIn === NULL) {
     /**
      * Der Login wird durchgeführt
      */
